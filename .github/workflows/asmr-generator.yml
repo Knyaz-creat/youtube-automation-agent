@@ -1,0 +1,30 @@
+name: ASMR Video Generator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Generate video
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/youtube-creds.json
+        run: |
+          echo '${{ secrets.YOUTUBE_CREDENTIALS }}' > /tmp/youtube-creds.json
+          npm start || true
